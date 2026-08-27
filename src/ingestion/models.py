@@ -1,7 +1,7 @@
 import datetime
+from datetime import date
 
 from pydantic import BaseModel
-from datetime import date
 
 
 class JournalEntry(BaseModel):
@@ -20,13 +20,8 @@ class ChunkMetadata(BaseModel):
 
 class Chunk(BaseModel):
     id: str
-    entry: str
-    metadata: ChunkMetadata
-
-    @classmethod
-    def from_journal_entry(cls, journal_entry: JournalEntry) -> "Chunk":
-        return cls(
-            id=str(journal_entry.date),
-            entry=journal_entry.entry,
-            metadata=ChunkMetadata(date=journal_entry.date),
-        )
+    source: str
+    start_timestamp: datetime.datetime
+    end_timestamp: datetime.datetime
+    text: str
+    metadata: dict
