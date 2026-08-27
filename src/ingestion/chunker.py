@@ -1,7 +1,9 @@
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
+
+from src.ingestion.chunker.JournalChunker import JournalChunker
 from src.ingestion.utils.chunker_utils import get_journal_data
-from src.ingestion.models import Chunk
+from src.ingestion.models import Chunk, Journal
 import json
 
 load_dotenv()
@@ -10,9 +12,17 @@ load_dotenv()
 model = SentenceTransformer("BAAI/bge-small-en-v1.5")
 
 
+def get_chunks(journal: Journal) -> list[Chunk]:
+    journal_chunker=JournalChunker()
+    chunks = [journal_chunker.chunk(entry) for entry in journal.entries]
+
+    return chunks
+
+
 def func():
+    journal_chunker=JournalChunker()
     doc_chunks = [
-        Chunk.from_journal_entry(entry) for entry in get_journal_data().entries
+        journal_chunker.chunk(entry) for entry in get_journal_data().entries
     ]
     docs = [entry.entry for entry in get_journal_data().entries]
     queries = ["how happy am i?"]
