@@ -1,14 +1,18 @@
+import json
 import os
 
 import fastapi
 from dotenv import load_dotenv
 
 from src.context.SimpleContextBuilder import SimpleContextBuilder
+from src.db.dao.SQLAlchemyChunkStore import SQLAlchemyChunkStore
+from src.db.database import SessionLocal
 from src.embeddings.embedding_service import get_embeddings, get_embedding, similarity
 from src.ingestion.chunker.JournalChunker import JournalChunker
 from src.ingestion.models import Journal, JournalEntry, Chunk, ChunkMetadata
 from src.ingestion.utils.chunker_utils import get_journal_data
 from src.llm.ollama import OllamaLLM
+from src.retrieval.PersistentRetriever import PersistentRetriever
 from src.retrieval.SimpleRetrieverStore import SimpleRetriever
 from src.retrieval.faiss_store import FaissVectorStore
 from src.embeddings.SimpleEmbedding import SimpleEmbedding
@@ -55,13 +59,6 @@ def faiss_init():
     vs.add(ids=[str(chunk.id) for chunk in chunks], embeddings=embeddings)
 
     vs.save(os.environ.get('VECTOR_DIR_FAISS'))
-
-
-
-
-
-
-
 
 
 def faiss_main():
@@ -117,6 +114,29 @@ def llm_00():
     print(response)
 
 
+def llm_01():
+    chunker=JournalChunker()
+    embedder=SimpleEmbedding(embedding_model_name=os.environ.get('EMBEDDING_MODEL_NAME'))
+    vs=FaissVectorStore.load(os.environ.get('VECTOR_DIR_FAISS'))
+    cs=SQLAlchemyChunkStore(SessionLocal)
+
+    query="tell me about the trekking dream"
+
+    retriever=PersistentRetriever(embedder, vs,cs)
+
+    res=retriever.retrieve(query, k=3)
+
+    context_builder=SimpleContextBuilder()
+    user_prompt=context_builder.get_user_prompt(retrievals=res, query=query)
+
+    # llm = OllamaLLM(model="qwen3:4b")
+    llm = OllamaLLM(model="gemma4:e2b-mlx")
+
+    response = llm.generate(
+        user_prompt=user_prompt, system_prompt=context_builder.get_system_prompt()
+    )
+
+    print(response)
 
 if __name__ == "__main__":
-    llm_00()
+    llm_01()
