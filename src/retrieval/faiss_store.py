@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import faiss
@@ -39,7 +40,7 @@ class FaissVectorStore(VectorStore):
 
         return [(self.ids[i], score) for score, i in zip(scores[0], indices[0]) if i != -1]
 
-    def save(self, path: str) -> None:
+    def save(self, path: str=os.environ.get("VECTOR_DIR_FAISS")) -> None:
         if not isinstance(path, Path):
             path = Path(path)
 

@@ -3,10 +3,11 @@ from sentence_transformers import SentenceTransformer
 
 from src.embeddings.SimpleEmbedding import SimpleEmbedding
 from src.ingestion.models import Chunk
+from src.retrieval.BaseRetriever import BaseRetriever
 from src.retrieval.VectorStore import VectorStore
 
 
-class SimpleRetriever:
+class SimpleRetriever(BaseRetriever):
     def __init__(
         self, embedder: SimpleEmbedding, vector_store: VectorStore, chunks: Sequence[Chunk]
     ):
