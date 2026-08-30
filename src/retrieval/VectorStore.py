@@ -26,7 +26,7 @@ class VectorStore(ABC):
         pass
 
     @abstractmethod
-    def save(self, path:str|Path)->None:
+    def save(self, path:str|Path|None=None)->None:
         """Persist the vector store."""
         pass
 
