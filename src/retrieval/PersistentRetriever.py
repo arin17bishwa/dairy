@@ -27,6 +27,6 @@ class PersistentRetriever(BaseRetriever):
         chunks_by_ids={chunk.id:chunk for chunk in chunks}
 
         return [
-            {"chunk": chunks_by_ids.get(chunk_id), "score": score}
+            {"chunk": chunks_by_ids.get(chunk_id), "score": score, 'chunk_id':chunk_id}
             for chunk_id, score in results
         ]
