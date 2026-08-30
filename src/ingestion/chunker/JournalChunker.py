@@ -15,13 +15,13 @@ class JournalChunker(Chunker):
 
     # todo: make it return sequence of chunks
     def chunk(self, journal_entry: JournalEntry) -> Chunk:
-        return Chunk(
-            id=self.create_id(journal_entry),
+        return Chunk.create(
+            _id=self.create_id(journal_entry),
             source=self.SOURCE,
             start_timestamp=datetime.combine(journal_entry.date, time.min),
             end_timestamp=datetime.combine(journal_entry.date, time.max),
             text=journal_entry.entry,
-            metadata=ChunkMetadata(date=journal_entry.date).model_dump(),
+            metadata={},
         )
 
     def get_chunks(self, journal_entries:Sequence[JournalEntry])->Sequence[Chunk]:
