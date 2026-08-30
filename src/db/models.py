@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import String, DateTime, JSON, Text
+from sqlalchemy import String, DateTime, JSON, Text, UniqueConstraint, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.db.database import Base
@@ -13,6 +13,15 @@ def utc_now() -> datetime:
 class ChunkModel(Base):
     __tablename__ = "chunks"
 
+    __table_args__ = (
+        UniqueConstraint(
+            "source",
+            "entry_id",
+            "chunk_index",
+            name="uq_chunk_position",
+        ),
+    )
+
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
 
     source: Mapped[str] = mapped_column(
@@ -20,14 +29,22 @@ class ChunkModel(Base):
         nullable=False,
     )
 
+    entry_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+
+    chunk_index: Mapped[int] = mapped_column(nullable=False)
+
     text: Mapped[str] = mapped_column(
         Text,
         nullable=False,
     )
 
-    start_timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    start_timestamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
-    end_timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    end_timestamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

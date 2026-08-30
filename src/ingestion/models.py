@@ -5,6 +5,7 @@ import hashlib
 
 from pydantic import BaseModel, Field
 
+
 class JournalEntry(BaseModel):
     entry: str
     date: date
@@ -22,10 +23,12 @@ class ChunkMetadata(BaseModel):
 class Chunk(BaseModel):
     id: str
     source: str
+    entry_id: str
+    chunk_index: int
+    text: str
     start_timestamp: datetime.datetime
     end_timestamp: datetime.datetime
-    text: str
-    content_hash:str
+    content_hash: str
     metadata: dict
 
     @classmethod
@@ -34,24 +37,27 @@ class Chunk(BaseModel):
         *,
         _id: str,
         source: str,
+        entry_id: str,
+        chunk_index: int,
+        text: str,
         start_timestamp: datetime.datetime,
         end_timestamp: datetime.datetime,
-        text: str,
-        metadata: dict=None,
+        metadata: dict = None,
     ) -> "Chunk":
         if metadata is None:
-            metadata=dict()
+            metadata = dict()
         return cls(
             id=_id,
             source=source,
+            text=text,
+            entry_id=entry_id,
+            chunk_index=chunk_index,
             start_timestamp=start_timestamp,
             end_timestamp=end_timestamp,
-            text=text,
             content_hash=hashlib.sha256(text.encode("utf-8")).hexdigest(),
             metadata=metadata,
         )
 
-
-    def update_text(self, text:str):
-        self.text=text
+    def update_text(self, text: str):
+        self.text = text
         self.content_hash = hashlib.sha256(self.text.encode("utf-8")).hexdigest()

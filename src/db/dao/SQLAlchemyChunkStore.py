@@ -1,5 +1,3 @@
-from abc import ABC
-
 from src.db.dao.interfaces.chunk_store import ChunkStore
 from src.db.models import ChunkModel
 from src.ingestion.models import Chunk
@@ -61,17 +59,19 @@ class SQLAlchemyChunkStore(ChunkStore):
             session.commit()
             return self.to_chunk(model)
 
-    def iter_all(self, batch_size:int=10):
+    def iter_all(self, batch_size: int = 10):
         with self.session_factory() as session:
-            offset=0
+            offset = 0
 
             while True:
-                models:list[ChunkModel]=session.query(ChunkModel).offset(offset).limit(batch_size).all()
+                models: list[ChunkModel] = (
+                    session.query(ChunkModel).offset(offset).limit(batch_size).all()
+                )
                 if not models:
                     break
 
                 yield [self.to_chunk(model) for model in models]
-                offset+=batch_size
+                offset += batch_size
 
     @staticmethod
     def _update(chunk_model: ChunkModel, chunk: Chunk) -> ChunkModel:
@@ -87,6 +87,8 @@ class SQLAlchemyChunkStore(ChunkStore):
         return Chunk(
             id=chunk_model.id,
             source=chunk_model.source,
+            entry_id=chunk_model.entry_id,
+            chunk_index=chunk_model.chunk_index,
             text=chunk_model.text,
             start_timestamp=chunk_model.start_timestamp,
             end_timestamp=chunk_model.end_timestamp,
@@ -99,6 +101,8 @@ class SQLAlchemyChunkStore(ChunkStore):
         return ChunkModel(
             id=chunk.id,
             source=chunk.source,
+            entry_id=chunk.entry_id,
+            chunk_index=chunk.chunk_index,
             text=chunk.text,
             start_timestamp=chunk.start_timestamp,
             end_timestamp=chunk.end_timestamp,

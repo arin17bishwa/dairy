@@ -1,7 +1,9 @@
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 
+from src.embeddings.SimpleEmbedding import SimpleEmbedding
 from src.ingestion.chunker.JournalChunker import JournalChunker
+from src.ingestion.chunker.JournalChunkerV2 import JournalChunkerV2
 from src.ingestion.utils.chunker_utils import get_journal_data
 from src.ingestion.models import Chunk, Journal
 import json
@@ -20,7 +22,8 @@ def get_chunks(journal: Journal) -> list[Chunk]:
 
 
 def func():
-    journal_chunker=JournalChunker()
+    embedder=SimpleEmbedding()
+    journal_chunker=JournalChunkerV2(embedder)
     doc_chunks = [
         journal_chunker.chunk(entry) for entry in get_journal_data().entries
     ]
@@ -34,6 +37,16 @@ def func():
     print(doc_chunks)
 
 
+def func_v2():
+    embedder = SimpleEmbedding()
+    journal_chunker = JournalChunkerV2(embedder)
+
+    chunks=journal_chunker.get_chunks(get_journal_data().entries)
+    for chunk in chunks:
+        if embedder.count_tokens(chunk.text)>500:
+            print(embedder.count_tokens(chunk.text), chunk.text)
+
+    # print(*chunks, sep='\n')
+
 if __name__ == "__main__":
-    func()
-    del model
+    func_v2()
