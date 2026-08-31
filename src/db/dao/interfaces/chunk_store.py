@@ -36,3 +36,8 @@ class ChunkStore(ABC):
     def iter_all(self, batch_size:int=10):
         pass
 
+    @abstractmethod
+    def delete_by_source(self, source:str):
+        pass
+
+
