@@ -28,6 +28,7 @@ def create_rag_pipeline() -> RagPipeline:
 
     context_builder = SimpleContextBuilder()
 
-    llm = OllamaLLM(model="gemma4:31b-mlx")
+    # llm = OllamaLLM(model="gemma4:31b-mlx")
+    llm = OllamaLLM(model="qwen3:4b")
 
     return RagPipeline(retriever=retriever, context_builder=context_builder, llm=llm)
