@@ -1,3 +1,5 @@
+from sqlalchemy import delete
+
 from src.db.dao.interfaces.chunk_store import ChunkStore
 from src.db.models import ChunkModel
 from src.ingestion.models import Chunk
@@ -72,6 +74,15 @@ class SQLAlchemyChunkStore(ChunkStore):
 
                 yield [self.to_chunk(model) for model in models]
                 offset += batch_size
+
+    def delete_by_source(self, source:str):
+        with self.session_factory() as session:
+            stmt = delete(ChunkModel).where(ChunkModel.source == source)
+
+            _ = session.execute(stmt)
+            session.commit()
+
+        return 1
 
     @staticmethod
     def _update(chunk_model: ChunkModel, chunk: Chunk) -> ChunkModel:

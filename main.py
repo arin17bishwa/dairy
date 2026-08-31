@@ -5,6 +5,7 @@ import fastapi
 from dotenv import load_dotenv
 
 from src.context.SimpleContextBuilder import SimpleContextBuilder
+from src.core.container import create_rag_pipeline
 from src.db.dao.SQLAlchemyChunkStore import SQLAlchemyChunkStore
 from src.db.database import SessionLocal
 from src.embeddings.embedding_service import get_embeddings, get_embedding, similarity
@@ -140,5 +141,16 @@ def llm_01():
 
     print(response)
 
+
+def llm_02():
+    rag=create_rag_pipeline()
+
+    q='hi'
+
+    ans=rag.detailed_answer(q, k=3)
+
+    print(ans)
+
+
 if __name__ == "__main__":
-    llm_01()
+    llm_02()

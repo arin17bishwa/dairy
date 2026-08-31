@@ -61,3 +61,21 @@ class Chunk(BaseModel):
     def update_text(self, text: str):
         self.text = text
         self.content_hash = hashlib.sha256(self.text.encode("utf-8")).hexdigest()
+
+class WhatsAppChat(BaseModel):
+    id: str
+    name: str| None # null for unsaved contacts
+    is_group: bool
+    participants: list[str]=Field(default_factory=list)
+
+
+class WhatsAppMessage(BaseModel):
+    id:str
+    chat_id:str
+    sender_id:str
+    timestamp:float
+    text:str|None=Field(default="<<message not available>>")
+    from_me:bool
+    reply_to:str|None
+    quoted_text:str|None
+    whatsapp_key_id:str
