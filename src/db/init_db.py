@@ -1,5 +1,5 @@
 from src.db.database import Base, engine
-from src.db.models import ChunkModel
+from src.db.models import *
 
 
 def init_db():
