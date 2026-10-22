@@ -1,3 +1,5 @@
+import os
+
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 
@@ -11,7 +13,8 @@ import json
 load_dotenv()
 
 # model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
-model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+# model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+model = SentenceTransformer(os.environ.get('EMBEDDING_MODEL_NAME'))
 
 
 def get_chunks(journal: Journal) -> list[Chunk]:
