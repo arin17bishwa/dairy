@@ -15,10 +15,13 @@ class JournalChunkerV2(Chunker):
     TARGET_CHUNK_TOKENS: int = 350
     MAX_CHUNK_TOKENS: int = 500
 
-    def __init__(self, embedder: SimpleEmbedding):
+    def __init__(self, embedder: SimpleEmbedding, min_chunk_tokens:int=0, target_chunk_token:int=0, max_chunk_tokens:int=0):
         super().__init__()
         self.embedder = embedder
         self.tokenizer = embedder.model.tokenizer
+        self.MIN_CHUNK_TOKENS=min_chunk_tokens if min_chunk_tokens else int(self.embedder.get_model().get_embedding_dimension()*0.4)
+        self.TARGET_CHUNK_TOKENS=target_chunk_token if target_chunk_token else int(self.embedder.get_model().get_embedding_dimension()*0.65)
+        self.MAX_CHUNK_TOKENS=max_chunk_tokens if max_chunk_tokens else int(self.embedder.get_model().get_embedding_dimension()*0.9)
 
     def chunk(self, journal_entry: JournalEntry) -> Sequence[Chunk]:
         entry_id = self.create_id(journal_entry)

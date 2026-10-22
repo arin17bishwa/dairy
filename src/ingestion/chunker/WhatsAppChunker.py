@@ -2,8 +2,10 @@ from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import datetime
 
+from sympy.polys.domains.simpledomain import SimpleDomain
 from typing_extensions import SupportsInt
 
+from src.embeddings.SimpleEmbedding import SimpleEmbedding
 from src.ingestion.chunker.BaseChunker import Chunker
 from src.ingestion.models import Chunk, WhatsAppMessage, JournalEntry
 
@@ -22,12 +24,13 @@ class WhatsAppChunker(Chunker):
 
     def __init__(
         self,
-        token_counter,
+        embedder:SimpleEmbedding,
         max_tokens: int = 500,
-        max_gap_seconds: int = 2 * 60 * 60,
+        max_gap_seconds: int = 4 * 60 * 60,
     ):
-        self.token_counter = token_counter
-        self.max_tokens = max_tokens
+        self.embedder=embedder
+        self.token_counter = embedder.count_tokens
+        self.max_tokens = max_tokens if max_tokens else int(self.embedder.get_model().get_embedding_dimension()*0.85)
         self.max_gap_seconds = max_gap_seconds
         self.chunk_idx:Iterator[int]=iter(range(10**9))
 
