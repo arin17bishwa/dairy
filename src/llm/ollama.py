@@ -15,7 +15,10 @@ class OllamaLLM(LLM):
                  ):
         self.model = model
 
-        headers={"Authorization":f"Bearer {token}"}
+        if token:
+            headers={"Authorization":f"Bearer {token}"}
+        else:
+            headers={}
         print(f'ollama calling at: {host}')
         self.client=Client(host=host, headers=headers, verify=False)
 

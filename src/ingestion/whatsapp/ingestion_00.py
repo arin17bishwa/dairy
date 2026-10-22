@@ -53,7 +53,12 @@ def process_messages(
         key_id_to_msg_id_mapping[key_id] = msg_id
 
         from_me = msg["from_me"]
-        sender_id: str | None = "ME" if from_me else msg["sender"]
+
+        if from_me:
+            sender_id='ME'
+        else:
+            sender_id=chat_model.name if not chat_model.is_group else msg['sender']
+
         msg_dttm: datetime = datetime.fromtimestamp(msg["timestamp"])
 
         msg_content = msg["data"]

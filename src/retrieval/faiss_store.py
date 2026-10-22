@@ -17,6 +17,8 @@ class FaissVectorStore(VectorStore):
         self.dimension: int = dim
         self.index = faiss.IndexFlatIP(dim)
         self.ids: list[str] = []
+        self.INDEX_FILE=f'journal_{self.dimension}.faiss'
+        self.ID_FILE=f'ids_{self.dimension}.json'
 
     def add(
         self, ids: Sequence[str], embeddings: Sequence[Sequence[float]], *args, **kwargs

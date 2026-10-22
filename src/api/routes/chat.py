@@ -13,4 +13,4 @@ def chat(
     rag_pipeline: RagPipeline = Depends(get_rag_pipeline),
 ):
 
-    return rag_pipeline.detailed_answer(body.query)
+    return rag_pipeline.detailed_answer(body.query,k=20)
