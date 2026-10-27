@@ -18,7 +18,6 @@ class RagPipeline:
         self.context_builder = context_builder
         self.llm = llm
 
-
     def answer(self, query: str, k: int = 4) -> str:
         retrieval = self.retriever.retrieve(query, k)
 
@@ -52,6 +51,7 @@ class RagPipeline:
                     chunk_id=chunk["chunk_id"],
                     score=chunk["score"],
                     chunk=chunk["chunk"].text,
+                    source_index=chunk.get("sources", []),
                 )
                 for chunk in retrieval
             ],
