@@ -123,6 +123,7 @@ def llm_01():
 
     query="tell me about the trekking dream"
     query="what do you think about my food habits?"
+    query="tell me about my hyderabad trip in details"
 
     retriever=PersistentRetriever(embedder, vs,cs)
 
@@ -131,9 +132,9 @@ def llm_01():
     context_builder=SimpleContextBuilder()
     user_prompt=context_builder.get_user_prompt(retrievals=res, query=query)
 
-    # llm = OllamaLLM(model="qwen3:4b")
+    llm = OllamaLLM(model="qwen3:4b")
     # llm = OllamaLLM(model="gemma4:e2b-mlx")
-    llm = OllamaLLM(model="gemma4:31b-mlx")
+    # llm = OllamaLLM(model="gemma4:31b-mlx")
 
     response = llm.generate(
         user_prompt=user_prompt, system_prompt=context_builder.get_system_prompt()
@@ -153,4 +154,4 @@ def llm_02():
 
 
 if __name__ == "__main__":
-    llm_02()
+    llm_01()
